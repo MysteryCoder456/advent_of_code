@@ -33,7 +33,7 @@ size_t getSeedsArray(uint64_t dest[], char *source) {
     return i;
 }
 
-int part1() {
+uint64_t part1() {
     FILE *fptr = fopen("day5.txt", "r");
     char lineBuffer[MAX_LINE];
 
@@ -91,13 +91,13 @@ int part1() {
     return arrayMin(seeds, seedCount);
 }
 
-int part2() {
+uint64_t part2() {
     // TODO
     return 0;
 }
 
 int main() {
-    printf("Part 1: %d\n", part1());
-    printf("Part 2: %d\n", part2());
+    printf("Part 1: %lld\n", part1());
+    printf("Part 2: %lld\n", part2());
     return 0;
 }
