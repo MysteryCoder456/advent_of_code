@@ -85,6 +85,8 @@ int part1() {
         }
     }
 
+    fclose(fptr);
+
     // Return minimum of mapped seeds
     return arrayMin(seeds, seedCount);
 }
