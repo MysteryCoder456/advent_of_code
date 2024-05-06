@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -18,14 +19,21 @@ int part1() {
     for (int i = 0; i < 4; i++) {
         int t0 = atoi(&timesBuffer[9 + i * 7]);
         int record = atoi(&distancesBuffer[9 + i * 7]);
-        int waysToBeat = 0;
 
-        // Check all values from t = 1 to t = time - 1
-        for (int t = 1; t < t0; t++) {
-            int x0 = t * (t0 - t);
-            waysToBeat += (int)(x0 > record);
-        }
+        // Simpler iterative approach
+        // int waysToBeat = 0;
+        // for (int t = 1; t < t0; t++) {
+        //     int x0 = t * (t0 - t);
+        //     waysToBeat += (int)(x0 > record);
+        // }
+        // margin *= waysToBeat;
 
+        // Faster & slightly more complicated solution using quadratics
+        double discriminant = sqrt(t0 * t0 - 4 * record);
+        double w1 = ceil((t0 + discriminant) / 2.0f);
+        double w2 = floor((t0 - discriminant) / 2.0f);
+        int waysToBeat = w1 - w2 - 1;
+        // printf("%d\n", waysToBeat);
         margin *= waysToBeat;
     }
 
