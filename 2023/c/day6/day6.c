@@ -40,9 +40,57 @@ int part1() {
     return margin;
 }
 
+int numDigits(int num) {
+    int digits = 0;
+    while (num > 0) {
+        num /= 10;
+        digits++;
+    }
+    return digits;
+}
+
 int part2() {
-    // TODO
-    return 0;
+    FILE *fptr = fopen("day6.txt", "r");
+
+    char timeBuffer[64];
+    char distanceBuffer[64];
+
+    fgets(timeBuffer, 65, fptr);
+    fgets(distanceBuffer, 65, fptr);
+    fclose(fptr);
+
+    // Parse combined data
+    char t0Buffer[16];
+    int t0Cursor = 0;
+
+    char recordBuffer[16];
+    int recordCursor = 0;
+
+    for (int i = 0; i < 4; i++) {
+        int time = atoi(&timeBuffer[9 + i * 7]);
+        sprintf(&t0Buffer[t0Cursor], "%d", time);
+        t0Cursor += numDigits(time);
+
+        int distance = atoi(&distanceBuffer[9 + i * 7]);
+        sprintf(&recordBuffer[recordCursor], "%d", distance);
+        recordCursor += numDigits(distance);
+    }
+
+    // printf("%s\t%s\n", t0Buffer, recordBuffer);
+
+    long long t0 = atoll(t0Buffer);
+    long long record = atol(recordBuffer);
+
+    // printf("%lld\t%lld\n", t0, record);
+
+    // Process solution
+    double discriminant = sqrt(t0 * t0 - 4 * record);
+    double w1 = ceil((t0 + discriminant) / 2.0f);
+    double w2 = floor((t0 - discriminant) / 2.0f);
+    int waysToBeat = w1 - w2 - 1;
+
+    // printf("D = %f\tw1 = %f\tw2 = %f\n", discriminant, w1, w2);
+    return waysToBeat;
 }
 
 int main() {
