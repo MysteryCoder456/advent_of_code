@@ -66,8 +66,6 @@ int part_one() {
     return safe_count;
 }
 
-// FIXME: need to fix some edge cases, seems to work on most data I throw at it
-// except the actual input though :(
 int part_two() {
     FILE *fp = fopen("day2.txt", "r");
     char buffer[64];
@@ -84,42 +82,39 @@ int part_two() {
         while ((level_str = strsep(&buf_copy, " ")) != NULL)
             levels[levels_size++] = atoi(level_str);
 
-        // Find and remove the first unsafe level
+        // Determine whether list is "safe"
         int dir = find_general_direction(levels, levels_size);
-        int unsafe_index = -1;
-        for (int i = 1; i < levels_size; i++) {
-            if (!is_level_safe(levels[i - 1], levels[i], dir)) {
-                if (i > 2 && is_level_safe(levels[i - 2], levels[i], dir) ||
-                    i < levels_size - 1 &&
-                        is_level_safe(levels[i], levels[i + 1], dir))
-                    unsafe_index = i - 1;
-                else
-                    unsafe_index = i;
+        bool safe = true;
+        for (int i = 1; i < levels_size; i++)
+            safe = safe && is_level_safe(levels[i - 1], levels[i], dir);
 
-                break;
-            }
-        }
-
-        // If no unsafe level is found, the list is safe
-        if (unsafe_index == -1) {
-            print_levels(levels, levels_size, true, dir);
+        if (safe) {
             safe_count++;
             continue;
         }
 
-        // If there is an unsafe level, remove it and check if the list is safe
-        // without it
+        // If list is unsafe, check if list is safe if each level is absent on
+        // its own
+        for (int i = 0; i < levels_size; i++) {
+            // Create a copy without the level at i
+            int new_levels[levels_size - 1];
+            int new_levels_size = 0;
+            for (int j = 0; j < levels_size; j++)
+                if (j != i)
+                    new_levels[new_levels_size++] = levels[j];
 
-        for (int i = unsafe_index; i < levels_size - 1; i++)
-            levels[i] = levels[i + 1];
-        levels_size--;
+            // Check if its safe
+            int new_dir = find_general_direction(new_levels, new_levels_size);
+            bool new_safe = true;
+            for (int j = 1; j < new_levels_size; j++)
+                new_safe = new_safe && is_level_safe(new_levels[j - 1],
+                                                     new_levels[j], new_dir);
 
-        dir = find_general_direction(levels, levels_size);
-        bool safe = true;
-        for (int i = 1; i < levels_size; i++)
-            safe = safe && is_level_safe(levels[i - 1], levels[i], dir);
-        safe_count += (int)safe;
-        print_levels(levels, levels_size, safe, dir);
+            if (new_safe) {
+                safe_count++;
+                break;
+            }
+        }
     }
 
     fclose(fp);
